@@ -257,6 +257,11 @@
 			},
 			// 下一曲
 			nextMusic(){
+				if(this.itemList.length == 1){
+					this.$refs.audio.currentTime = 0
+					this.$refs.audio.play()
+					return
+				}
 				if(this.orderIndex == 0){ // 顺序播放
 					if(this.$store.state.index == this.$store.state.itemList.length - 1){
 						this.$store.state.item = this.$store.state.itemList[0]
@@ -439,7 +444,6 @@
 				if(n.name){
 					this.sixsixsix()
 					this.$refs.audio.currentTime = 0
-					// this.$refs.audio.play()
 				}
 			},
 		},
@@ -450,13 +454,6 @@
 				this.$refs.audio.ontimeupdate = null
 			}
 		},
-	
-		// created(){
-		// 	// 初始化音乐数据
-		// 	if(this.musicData.name && this.musicIndex >= 0){
-		// 		this.sixsixsix()
-		// 	}
-		// },
 	
 	}
 </script>
@@ -701,6 +698,7 @@
 				width: 0;
 				height: 0;
 				font-size: 0;
+				transition: width 0.5s, height 0.5s;
 			}
 		}
 		.commentBig{

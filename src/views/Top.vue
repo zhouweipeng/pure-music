@@ -35,18 +35,16 @@
 		
 		<!-- 详情 -->
 		<div :class="{detailsBox: true, detailsBoxB: isBig}" ref="detailsBox" v-show="isDetails">
-			<div>
-				<img :src="detailsData.cover" class="auto_img" />
-				<div class="listBox"> <!-- @click="play(detailsData.list, item, index)" -->
-					<van-cell v-for="(item, index) in detailsData.list" :key="index">
-						<div slot="icon" :class="{rank: true, red: index < 3}" @click="play(detailsData.list, item, index)">{{index + 1}}</div>
-						<div slot="title" class="limit" @click="play(detailsData.list, item, index)">{{item.name}}</div>
-						<div slot="label" class="limit" @click="play(detailsData.list, item, index)">
-							<span>{{item.ar[0].name}} - </span>
-							<span>{{item.al.name}}</span>
-						</div>
-					</van-cell>
-				</div>
+			<img :src="detailsData.cover" class="auto_img" />
+			<div class="listBox"> <!-- @click="play(detailsData.list, item, index)" -->
+				<van-cell v-for="(item, index) in detailsData.list" :key="index">
+					<div slot="icon" :class="{rank: true, red: index < 3}" @click="play(detailsData.list, item, index)">{{index + 1}}</div>
+					<div slot="title" class="limit" @click="play(detailsData.list, item, index)">{{item.name}}</div>
+					<div slot="label" class="limit" @click="play(detailsData.list, item, index)">
+						<span>{{item.ar[0].name}} - </span>
+						<span>{{item.al.name}}</span>
+					</div>
+				</van-cell>
 			</div>
 		</div>
 		
@@ -55,8 +53,6 @@
 </template>
 
 <script>
-	import BScroll from 'better-scroll'
-	var scroll
 	
 	export default {
 		name: 'top',
@@ -109,7 +105,6 @@
 				setTimeout(() => {
 					this.isBigX = false
 				}, 0)
-				scroll.scrollTo(0, 0, 0)
 			},
 			back(){
 				this.isBig = false
@@ -125,13 +120,8 @@
 			}).then(r => {
 				this.topList = r.data.list
 			})
-		},
-		
-		mounted(){
-			scroll = new BScroll(this.$refs.detailsBox, {
-				click: true,
-			})
 		}
+		
 	}
 </script>
 
@@ -218,6 +208,7 @@
 			position: fixed;
 			z-index: 102;
 			background: rgba(0,0,0,0.1);
+			overflow-y: scroll;
 			.listBox{
 				background: #fff;
 				position: relative;
