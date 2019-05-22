@@ -444,6 +444,7 @@
 				if(n.name){
 					this.sixsixsix()
 					this.$refs.audio.currentTime = 0
+					this.$refs.audio.play()
 				}
 			},
 		},
