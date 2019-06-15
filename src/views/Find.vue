@@ -93,6 +93,7 @@
 			},
 			// 查看歌单详情
 			playListDetails(item){
+				this.$store.state.isPopupLoad = true
 				this.detailsData = {}
 				this.$store.state.isDetails = !this.$store.state.isDetails
 				this.axios({
@@ -107,10 +108,12 @@
 						des: r.data.playlist.description,
 						songList: r.data.playlist.tracks
 					}
+					this.$store.state.isPopupLoad = false
 				})
 			},
 			// 查看专辑详情
 			albumDetails(item){
+				this.$store.state.isPopupLoad = true
 				this.detailsData = {}
 				this.$store.state.isDetails = !this.$store.state.isDetails
 				this.axios({
@@ -125,6 +128,7 @@
 						des: r.data.album.description,
 						songList: r.data.songs
 					}
+					this.$store.state.isPopupLoad = false
 				})
 			},
 		},

@@ -1,36 +1,37 @@
 <template>
 	<div class="my">
 		
-		<div class="userBox">
-			<img :src="loginData.backgroundUrl" class="auto_img" />
-			<div class="avatarBox">
-				<img :src="loginData.avatarUrl" class="avatar" @click="exit" />
-				<h2>{{loginData.nickname}}</h2>
-			</div>
-		</div>
+		<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
 		
-		<div class="listBox">
-			<h2>创建的歌单</h2>
-			<div v-for="(item, index) in playList" :key="index" v-if="item.userId == loginData.userId" @click="playListDetails(item)">
-				<img v-lazy="item.coverImgUrl" class="cover" />
-				<div class="textBox">
-					<p>{{item.name}}</p>
-					<p>{{item.trackCount}}首</p>
+		<div v-show="!isLoad">
+			<div class="userBox">
+				<img :src="loginData.backgroundUrl" class="auto_img" />
+				<div class="avatarBox">
+					<img :src="loginData.avatarUrl" class="avatar" @click="exit" />
+					<h2>{{loginData.nickname}}</h2>
 				</div>
 			</div>
-			
-			<h2>收藏的歌单</h2>
-			<div v-for="(item, index) in playList" :key="index" v-if="item.userId != loginData.userId" @click="playListDetails(item)">
-				<img v-lazy="item.coverImgUrl" class="cover" />
-				<div class="textBox">
-					<p>{{item.name}}</p>
-					<p>{{item.trackCount}}首</p>
+			<div class="listBox">
+				<h2>创建的歌单</h2>
+				<div v-for="(item, index) in playList" :key="index" v-if="item.userId == loginData.userId" @click="playListDetails(item)">
+					<img v-lazy="item.coverImgUrl" class="cover" />
+					<div class="textBox">
+						<p>{{item.name}}</p>
+						<p>{{item.trackCount}}首</p>
+					</div>
+				</div>
+				<h2>收藏的歌单</h2>
+				<div v-for="(item, index) in playList" :key="index" v-if="item.userId != loginData.userId" @click="playListDetails(item)">
+					<img v-lazy="item.coverImgUrl" class="cover" />
+					<div class="textBox">
+						<p>{{item.name}}</p>
+						<p>{{item.trackCount}}首</p>
+					</div>
 				</div>
 			</div>
+			<!-- 详情弹出层 -->
+			<popup :detailsPop="detailsData"></popup>
 		</div>
-		
-		<!-- 详情弹出层 -->
-		<popup :detailsPop="detailsData"></popup>
 		
 	</div>
 </template>
@@ -50,6 +51,8 @@
 			return {
 				playList: [],
 				detailsData: {},
+				// 加载中
+				isLoad: true
 			}
 		},
 		
@@ -79,6 +82,7 @@
 			},
 			// 查看歌单详情
 			playListDetails(item){
+				this.$store.state.isPopupLoad = true
 				this.detailsData = {}
 				this.$store.state.isDetails = !this.$store.state.isDetails
 				this.axios({
@@ -93,6 +97,7 @@
 						des: r.data.playlist.description,
 						songList: r.data.playlist.tracks
 					}
+					this.$store.state.isPopupLoad = false
 				})
 			},
 		},
@@ -104,6 +109,7 @@
 				url: 'http://localhost:3000/user/playlist?uid=' + this.loginData.userId
 			}).then(r => {
 				this.playList = r.data.playlist
+				this.isLoad = false
 			})
 		}
 		
@@ -111,6 +117,9 @@
 </script>
 
 <style lang="less" scoped>
+	.load{
+		margin: 50% auto;
+	}
 	.my{
 		.userBox{
 			position: relative;

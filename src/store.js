@@ -18,12 +18,8 @@ export default new Vuex.Store({
 		// popup组件的显示隐藏
 		isDetails: false,
 		// 歌手信息
-		singerData: {}
-	},
-	mutations: {
-		// 变更状态
-		changeBS(state){
-			state.isBS = !state.isBS
-		}
+		singerData: {},
+		// 弹出框加载动画
+		isPopupLoad: true
 	}
 });

@@ -13,7 +13,6 @@
 			<div class="history" v-show="historySearch.length != 0">
 				<span v-for="(item, index) in historySearch" :key="index" @click="clickSearch(item)">{{item}}</span>
 			</div>
-			
 			<h2>热搜榜</h2>
 			<div class="hotItem" v-for="(item, index) in hots" :key="index" @click="clickSearch(item.first)">
 				<div :class="{left: true, red: index < 3}">{{index + 1}}</div>
@@ -23,7 +22,8 @@
 		
 		<!-- 搜索结果 -->
 		<div class="resultBox" v-show="isResult">
-			<van-tabs v-model="active" type="card" title-active-color="#8a8a8a" title-inactive-color="#8a8a8a" color="#ececec" animated @click="changeResult">
+			<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
+			<van-tabs v-model="active" type="card" title-active-color="#8a8a8a" title-inactive-color="#8a8a8a" color="#ececec" animated @click="changeResult" v-show="!isLoad">
 				<van-tab title="单曲">
 					<div>
 						<van-cell :title="item.name" v-for="(item, index) in resultData[0].data" :key="index" @click="play(item)">
@@ -116,6 +116,7 @@
 				],
 				// 详情
 				detailsData: {},
+				isLoad: true
 			}
 		},
 		
@@ -135,6 +136,7 @@
 					this.searchValue = ''
 					return
 				}
+				this.isLoad = true
 				if(isReset){
 					// console.log('重新搜索')
 					this.active = 0
@@ -168,6 +170,7 @@
 							this.resultData[3].data = r.data.result.playlists
 							break;
 					}
+					this.isLoad = false
 				})
 				this.isResult = true
 			},
@@ -279,8 +282,10 @@
 </script>
 
 <style lang="less" scoped>
+	.load{
+		margin: 50% auto;
+	}
 	.search{
-		
 		.defaultBox{
 			width: 90%;
 			margin: 0 auto;

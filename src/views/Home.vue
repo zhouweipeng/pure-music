@@ -31,41 +31,13 @@
 				tIndex: 1,
 			}
 		},
-
-		computed: {
-			isBS(){
-				return this.$store.state.isBS
-			},
-		},
-		
-		watch: {
-			
-		},
 		
 		methods: {
-			changeBS(){
-				if(this.isBS){
-					this.$store.commit('changeBS')
-				}
-			},
 			changePage(item, index){
 				this.tIndex = index
 				this.$router.push({name: item.view})
 			}
 		},
-		
-		created(){
-			this.axios({
-				methods: 'get',
-				url: 'http://localhost:3000/banner?type=1'
-			}).then(r => {
-				this.swipeImages = r.data.banners
-			})
-		},
-		
-		mounted(){
-			
-		}
 
     }
 </script>

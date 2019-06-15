@@ -14,7 +14,8 @@
 		
 		<van-tabs sticky title-active-color="#000" title-inactive-color="#8a8a8a" color="#8a8a8a" animated @click="changeData">
 			<van-tab title="热门单曲">
-				<div class="content">
+				<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
+				<div class="content" v-show="!isLoad">
 					<van-cell :title="item.name" v-for="(item, index) in hotSongs" :key="index" @click="play(hotSongs, item, index)">
 						<div slot="label">
 							<span>{{item.ar[0].name}}</span>
@@ -24,7 +25,8 @@
 				</div>
 			</van-tab>
 			<van-tab title="专辑">
-				<div class="content">
+				<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
+				<div class="content" v-show="!isLoad">
 					<van-cell :title="item.name" v-for="(item, index) in hotAlbums" :key="index" @click="albumDetails(item)">
 						<img v-lazy="item.picUrl" slot="icon" class="cover" />
 						<div slot="label">
@@ -35,9 +37,10 @@
 				</div>
 			</van-tab>
 			<van-tab title="艺人信息">
-				<div class="content">
+				<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
+				<div class="content" v-show="!isLoad">
 					<h2 class="title">{{singer.name}}简介</h2>
-					<p class="txt">{{personData.briefDesc}}</p>
+					<p class="txt">{{personData.briefDesc}}}</p>
 					<div v-for="(item, index) in personData.introduction" :key="index">
 						<h2 class="title">{{item.ti}}</h2>
 						<p class="txt">{{item.txt}}</p>
@@ -72,7 +75,8 @@
 					briefDesc: '',
 					introduction: []
 				},
-				detailsData: {}
+				detailsData: {},
+				isLoad: true
 			}
 		},
 		
@@ -97,6 +101,7 @@
 			},
 			// 获取数据
 			getData(index){
+				this.isLoad = true
 				if(index == 0){
 					var url = 'http://localhost:3000/artists?id=' + this.singer.id
 				}else if(index == 1){
@@ -122,6 +127,7 @@
 							}
 							break;
 					}
+					this.isLoad = false
 				})
 			},
 			// 播放
@@ -157,6 +163,9 @@
 </script>
 
 <style lang="less" scoped>
+	.load{
+		margin: 50% auto;
+	}
 	.navBar{
 		span{
 			margin-left: 0.3rem;

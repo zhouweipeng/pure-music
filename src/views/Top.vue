@@ -1,53 +1,55 @@
 <template>
 	
 	<div class="top">
-		<div v-show="isBigX">
-			<h2>官方榜</h2>
-			<div class="topBox">
-				<div v-for="(item, index) in topList" :key="index" v-if="item.tracks.length != 0" @click="details(item, index)" :ref="'top' + index">
-					<img v-lazy="item.coverImgUrl" class="coverT" />
-					<div class="textBox">
-						<p>1.{{item.tracks[0].first}} - {{item.tracks[0].second}}</p>
-						<p>2.{{item.tracks[1].first}} - {{item.tracks[1].second}}</p>
-						<p>3.{{item.tracks[2].first}} - {{item.tracks[2].second}}</p>
+		<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isLoad" />
+		<div v-show="!isLoad">
+			<div v-show="isBigX">
+				<h2>官方榜</h2>
+				<div class="topBox">
+					<div v-for="(item, index) in topList" :key="index" v-if="item.tracks.length != 0" @click="details(item, index)" :ref="'top' + index">
+						<img v-lazy="item.coverImgUrl" class="coverT" />
+						<div class="textBox">
+							<p>1.{{item.tracks[0].first}} - {{item.tracks[0].second}}</p>
+							<p>2.{{item.tracks[1].first}} - {{item.tracks[1].second}}</p>
+							<p>3.{{item.tracks[2].first}} - {{item.tracks[2].second}}</p>
+						</div>
+					</div>
+				</div>
+				<h2>更多榜单</h2>
+				<div class="moreBox">
+					<van-row>
+						<van-col span="8" v-for="(item, index) in topList" :key="index" v-if="item.tracks.length == 0">
+							<div class="colBox" @click="details(item, index)" :ref="'more' + index">
+								<img v-lazy="item.coverImgUrl" class="auto_img coverM" />
+								<p>{{item.name}}</p>
+							</div>
+						</van-col>
+					</van-row>
+				</div>
+			</div>
+			<!-- 返回 -->
+			<div :class="{tab: true, tabB: isBig}">
+				<van-icon name="arrow-left" size="18PX" class="back" @click="back" />
+				<h2>{{detailsData.name}}</h2>
+			</div>
+			<!-- 详情 -->
+			<div :class="{detailsBox: true, detailsBoxB: isBig}" ref="detailsBox" v-show="isDetails">
+				<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isDetailLoad" />
+				<div v-show="!isDetailLoad">
+					<img :src="detailsData.cover" class="auto_img" />
+					<div class="listBox"> <!-- @click="play(detailsData.list, item, index)" -->
+						<van-cell v-for="(item, index) in detailsData.list" :key="index">
+							<div slot="icon" :class="{rank: true, red: index < 3}" @click="play(detailsData.list, item, index)">{{index + 1}}</div>
+							<div slot="title" class="limit" @click="play(detailsData.list, item, index)">{{item.name}}</div>
+							<div slot="label" class="limit" @click="play(detailsData.list, item, index)">
+								<span>{{item.ar[0].name}} - </span>
+								<span>{{item.al.name}}</span>
+							</div>
+						</van-cell>
 					</div>
 				</div>
 			</div>
-			
-			<h2>更多榜单</h2>
-			<div class="moreBox">
-				<van-row>
-					<van-col span="8" v-for="(item, index) in topList" :key="index" v-if="item.tracks.length == 0">
-						<div class="colBox" @click="details(item, index)" :ref="'more' + index">
-							<img v-lazy="item.coverImgUrl" class="auto_img coverM" />
-							<p>{{item.name}}</p>
-						</div>
-					</van-col>
-				</van-row>
-			</div>
 		</div>
-		
-		<!-- 返回 -->
-		<div :class="{tab: true, tabB: isBig}">
-			<van-icon name="arrow-left" size="18PX" class="back" @click="back" />
-			<h2>{{detailsData.name}}</h2>
-		</div>
-		
-		<!-- 详情 -->
-		<div :class="{detailsBox: true, detailsBoxB: isBig}" ref="detailsBox" v-show="isDetails">
-			<img :src="detailsData.cover" class="auto_img" />
-			<div class="listBox"> <!-- @click="play(detailsData.list, item, index)" -->
-				<van-cell v-for="(item, index) in detailsData.list" :key="index">
-					<div slot="icon" :class="{rank: true, red: index < 3}" @click="play(detailsData.list, item, index)">{{index + 1}}</div>
-					<div slot="title" class="limit" @click="play(detailsData.list, item, index)">{{item.name}}</div>
-					<div slot="label" class="limit" @click="play(detailsData.list, item, index)">
-						<span>{{item.ar[0].name}} - </span>
-						<span>{{item.al.name}}</span>
-					</div>
-				</van-cell>
-			</div>
-		</div>
-		
 	</div>
 	
 </template>
@@ -63,7 +65,9 @@
 				isDetails: false,
 				isBig: false,
 				isBigX: true,
-				detailsData: {}
+				detailsData: {},
+				isLoad: true,
+				isDetailLoad: true
 			}
 		},
 		
@@ -76,6 +80,7 @@
 			},
 			// 查看榜单详情
 			details(item, index){
+				this.isDetailLoad = true
 				this.detailsData = {}
 				this.axios({
 					methods: 'get',
@@ -86,6 +91,7 @@
 						cover: r.data.playlist.coverImgUrl,
 						list: r.data.playlist.tracks
 					}
+					this.isDetailLoad = false
 				})
 				if(item.tracks.length != 0){
 					this.$refs.detailsBox.style.width = this.$refs['top' + index][0].offsetWidth + 'px'
@@ -119,6 +125,7 @@
 				url: 'http://localhost:3000/toplist/detail'
 			}).then(r => {
 				this.topList = r.data.list
+				this.isLoad = false
 			})
 		}
 		
@@ -126,6 +133,9 @@
 </script>
 
 <style lang="less" scoped>
+	.load{
+		margin: 50% auto;
+	}
 	.top{
 		h2{
 			margin: 0;

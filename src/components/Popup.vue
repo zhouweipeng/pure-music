@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<van-popup v-model="isDetails" class="popup" @click-overlay="close" position="bottom">
-			<div class="topBox">
+			<van-loading color="#8a8a8a" size="1rem" class="load" v-show="isPopupLoad" />
+			<div class="topBox" v-show="!isPopupLoad">
 				<van-row type="flex" justify="space-around">
 					<van-col span="10" class="coverBox">
 						<img :src="detailsPop.cover" class="auto_img" />
@@ -14,7 +15,7 @@
 					</van-col>
 				</van-row>
 			</div>
-			<div class="bottomBox">
+			<div class="bottomBox" v-show="!isPopupLoad">
 				<van-cell v-for="(item, index) in detailsPop.songList" :key="index" @click="play(detailsPop.songList, item, index)">
 					<div slot="title" class="limit">{{item.name}}</div>
 					<div slot="label" class="limit">
@@ -43,6 +44,9 @@
 					return this.$store.state.isDetails
 				},
 				set: function(){}
+			},
+			isPopupLoad(){
+				return this.$store.state.isPopupLoad
 			}
 		},
 		
@@ -81,6 +85,9 @@
 </script>
 
 <style lang="less" scoped>
+	.load{
+		margin: 50% auto;
+	}
 	.popup{
 		width: 90vw;
 		height: 90vh;

@@ -3,19 +3,15 @@
 		
 		<router-view v-show="isBS" />
 		
-		<div :class="{music: true, musicB: !isBS, musicS: isBS}" @click.stop="changeBS" v-show="itemList.length != 0">
+		<div :class="{music: true, musicB: !isBS, musicS: isBS}" @click.stop="changeBS(true)" v-show="itemList.length != 0">
 			<!-- 顶栏 -->
-			<van-row class="topNav">
-				<van-col span="16">
-					<div @click.stop="changeBS">
-						<p><van-icon name="arrow-left" color="#000" size="18PX" class="vIcon" /></p>
-						<p>{{musicName}}</p>
-					</div>
-				</van-col>
-				<van-col span="8">
-					<p>{{singer}}</p>
-				</van-col>
-			</van-row>
+			<div class="topNav">
+				<div @click.stop="changeBS(false)" class="backBox">
+					<p><van-icon name="arrow-left" color="#000" size="18PX" class="vIcon" /></p>
+					<p>{{musicName}}</p>
+				</div>
+				<p>{{singer}}</p>
+			</div>
 			
 			<!-- 封面图 -->
 			<div class="cover-box">
@@ -76,7 +72,7 @@
 			</div>
 			
 			<!-- 音量调节 -->
-			<van-popup v-model="isVolume" class="volumeBox">
+			<van-popup v-model="isVolume" class="volumeBox" position="left">
 				<div>
 					<van-slider v-model="volume" :min="0" :max="100" active-color="#000" @change="changeVolume" class="volume" />
 				</div>
@@ -233,8 +229,11 @@
 			},
 			// 调音量
 			changeVolume(){
+				if(isNaN(this.volume / 100)){
+					return
+				}
 				if(this.$refs.audio){
-					this.$refs.audio.volume = this.volume / 100
+					this.$refs.audio.volume = (this.volume / 100)
 				}
 			},
 			// 调进度
@@ -379,8 +378,12 @@
 			comment(){
 				this.isComment = !this.isComment
 			},
-			changeBS(){
-				this.$store.commit('changeBS')
+			changeBS(flag){
+				if(flag){ // 点击全局
+					this.$store.state.isBS = false
+				}else{ // 点击箭头
+					this.$store.state.isBS = true
+				}
 			},
 			// 删除歌单
 			deleteList(){
@@ -444,9 +447,9 @@
 				if(n.name){
 					this.sixsixsix()
 					this.$refs.audio.currentTime = 0
-					this.$refs.audio.play()
+					// this.$refs.audio.play()
 				}
-			},
+			}
 		},
 	
 		// 退出页面时销毁
@@ -471,7 +474,10 @@
 	}
 	
 	*{
-		font-family: '宋体';
+		// font-family: '宋体';
+		-webkit-transform: translate3d(250px,250px,250px)
+		rotate3d(250px,250px,250px,-120deg)
+		scale3d(0.5, 0.5, 0.5);
 	}
 </style>
 
@@ -522,33 +528,37 @@
 		height: 100%;
 		width: 100%;
 		.topNav{
+			display: flex;
+			justify-content: space-between;
 			position: fixed;
 			left: 0;
 			right: 0;
 			top: 0;
 			z-index: 103;
 			height: 1.8rem;
+			padding: 0 0.3rem;
 			font-family: '宋体';
 			line-height: 1.8rem;
 			background: #ececec;
 			border-bottom-left-radius: 0.5rem;
 			border-bottom-right-radius: 0.5rem;
+			.backBox{
+				z-index: 104;
+			}
 			.vIcon{
-				margin: 0 0.3rem ;
+				margin-right: 0.3rem ;
 				vertical-align: -11%;
 			}
 			p{
 				margin: 0;
+				padding: 0 0.1rem;
 				display: inline-block;
 				font-size: 18PX;
 				font-weight: 500;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				overflow: hidden;
-				max-width: 4rem;
-			}
-			.van-col--8{
-				padding-right: 0.3rem;
+				max-width: 30vw;
 				text-align: right;
 			}
 		}
@@ -670,7 +680,7 @@
 		
 		.volumeBox{
 			width: 100%;
-			height: 1rem;
+			// height: 1rem;
 			border-radius: 0.5rem;
 			.volume{
 				width: 60%;
